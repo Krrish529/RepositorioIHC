@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Reserva de la Cancha</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+  <!-- IMPORTANTE: Agrega el CSS del sidebar aquí o importa el CSS desde navbarPublico.html si lo tienes separado -->
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f6fa;
+    }
+    .sidebar {
+      width: 240px;
+      background: #26384D;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 18px;
+      z-index: 1000;
+      transition: width 0.33s cubic-bezier(.86,0,.07,1);
+      min-width: 60px;
+    }
+    .sidebar.collapsed {
+      width: 60px;
+      min-width: 60px;
+    }
+    .sidebar .logo {
+      width: 140px;
+      margin-bottom: 32px;
+      transition: width 0.33s cubic-bezier(.86,0,.07,1), opacity 0.33s;
+    }
+    .sidebar.collapsed .logo {
+      width: 40px;
+      opacity: 0;
+      margin-bottom: 8px;
+      pointer-events: none;
+    }
+    .sidebar .nav-list {
+      width: 100%;
+      flex: 1;
+      padding-left: 0;
+      margin: 0;
+      list-style: none;
+      transition: opacity 0.33s;
+    }
+    .sidebar.collapsed .nav-list {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .sidebar .nav-list li {
+      width: 100%;
+    }
+    .sidebar .nav-list li a {
+      display: flex;
+      align-items: center;
+      padding: 13px 24px;
+      color: #fff;
+      text-decoration: none;
+      font-size: 1rem;
+      transition: background 0.2s, color 0.2s;
+      border-radius: 8px;
+      background: none;
+      outline: none;
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .sidebar .nav-list li a.active {
+      background: #5DC3E7;
+      color: #26384D;
+      font-weight: bold;
+    }
+    .sidebar .nav-list li a:not(.active):hover {
+      background: #3A5472;
+      color: #fff;
+    }
+    .sidebar .nav-list li a i {
+      margin-right: 16px;
+      min-width: 20px;
+      text-align: center;
+      font-size: 1.1em;
+      transition: margin 0.33s;
+    }
+    .sidebar.collapsed .nav-list li a i {
+      margin-right: 0;
+      font-size: 1.2em;
+    }
+    .sidebar.collapsed .nav-list li a span {
+      display: none;
+    }
+    .session-section {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 18px;
+      margin-top: 10px;
+      transition: opacity 0.33s;
+    }
+    .session-section span {
+      color: #fff;
+      margin-bottom: 7px;
+      font-size: 0.98em;
+      white-space: nowrap;
+      transition: opacity 0.33s;
+    }
+    .session-section button {
+      background: #5DC3E7;
+      color: #26384D;
+      border: none;
+      padding: 7px 18px;
+      border-radius: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, opacity 0.33s;
+      white-space: nowrap;
+    }
+    .session-section button:hover {
+      background: #42aacd;
+      color: #fff;
+    }
+    .sidebar.collapsed .session-section span,
+    .sidebar.collapsed .session-section button {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .sidebar .bottom-section {
+      width: 100%;
+      padding: 24px 16px 8px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .sidebar .bottom-section button {
+      width: 100%;
+      background: #26384D;
+      color: #fff;
+      border: none;
+      padding: 10px 0;
+      border-radius: 20px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .sidebar .bottom-section button:hover {
+      background: #3A5472;
+    }
+    .sidebar .bottom-section .logo-small {
+      width: 90px;
+      margin-top: 10px;
+      transition: width 0.33s, opacity 0.33s;
+    }
+    .sidebar.collapsed .bottom-section .logo-small {
+      width: 38px;
+      opacity: 0.7;
+    }
+    .sidebar.collapsed .bottom-section button span {
+      display: none;
+    }
+    .main-content {
+      margin-left: 240px;
+      padding: 36px 0 0 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      transition: margin-left 0.33s cubic-bezier(.86,0,.07,1);
+    }
+    .main-content.sidebar-collapsed {
+      margin-left: 60px;
+    }
+    .box {
+      background: #fff;
+      border-radius: 12px;
+      margin-left: 40px;
+      margin-top: 0;
+      box-shadow: 0 1px 8px 0 #0002;
+      padding: 28px 36px 32px 36px;
+      min-width: 320px;
+      max-width: 530px;
+      width: 100%;
+      margin-bottom: 24px;
+      transition: margin-left 0.33s cubic-bezier(.86,0,.07,1);
+    }
+    .box h2 {
+      margin-top: 0;
+      font-size: 1.3em;
+      font-weight: 600;
+      color: #26384D;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .calendar-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+    .calendar-bar select, .calendar-bar button {
+      font-size: 1em;
+      padding: 5px 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    .calendar-bar button {
+      background: #f1f2f6;
+      border: none;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      font-size: 1.1em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 2px;
+    }
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 38px);
+      gap: 6px;
+      margin-bottom: 16px;
+      justify-content: center;
+    }
+    .calendar-grid .day {
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: 8px;
+      background: #f1f2f6;
+      border: none;
+      font-size: 1em;
+      transition: background 0.2s, color 0.2s;
+      outline: none;
+      color: #26384D;
+    }
+    .calendar-grid .day.selected {
+      background: #5DC3E7;
+      color: #fff;
+      font-weight: bold;
+    }
+    .calendar-grid .day.inactive {
+      color: #c4c4c4;
+      cursor: default;
+      background: #f5f6fa;
+    }
+    .slots-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .slot {
+      background: #f1f2f6;
+      border-radius: 8px;
+      padding: 9px 18px;
+      cursor: pointer;
+      color: #26384D;
+      font-size: 1em;
+      transition: background 0.2s, color 0.2s;
+      border: none;
+      outline: none;
+      margin-bottom: 6px;
+      margin-right: 6px;
+    }
+    .slot.selected {
+      background: #269643;
+      color: #fff;
+      font-weight: bold;
+    }
+    .slot.disabled {
+      background: #d0d6de;
+      color: #8a9099;
+      cursor: not-allowed;
+    }
+    .continue-btn {
+      background: #269643;
+      color: #fff;
+      font-size: 1.1em;
+      padding: 12px 38px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      position: absolute;
+      bottom: 32px;
+      right: 48px;
+      box-shadow: 0 2px 12px 0 #0001;
+      transition: background 0.2s;
+    }
+    .continue-btn:hover {
+      background: #19722d;
+    }
+    @media (max-width: 1150px) {
+      .main-content, .main-content.sidebar-collapsed {
+        margin-left: 60px;
+      }
+      .box {
+        margin-left: 0;
+        max-width: 95vw;
+      }
+    }
+    @media (max-width: 700px) {
+      .main-content, .main-content.sidebar-collapsed {
+        margin-left: 0;
+        padding: 10px 0 0 0;
+      }
+      .box {
+        margin-left: 0;
+        margin-right: 0;
+        width: 95vw;
+        min-width: unset;
+        max-width: unset;
+      }
+      .continue-btn {
+        position: static;
+        margin: 20px auto 0 auto;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar importado dinámicamente -->
+  <div id="navbar"></div>
+  <main class="main-content" id="main-content">
+    <div class="box">
+      <h2>Elige la fecha</h2>
+      <div class="calendar-bar">
+        <select id="mes">
+          <option value="11" selected>noviembre</option>
+          <option value="10">octubre</option>
+          <option value="12">diciembre</option>
+        </select>
+        <select id="anio">
+          <option>2024</option>
+          <option selected>2025</option>
+          <option>2026</option>
+        </select>
+        <button id="prevMes">&lt;</button>
+        <button id="nextMes">&gt;</button>
+        <select>
+          <option>1h (S/.60)</option>
+        </select>
+      </div>
+      <div class="calendar-grid" id="calendar-grid"></div>
+      <div style="margin: 16px 0 8px 0; color: #26384D;" id="fecha-seleccionada">
+        12 noviembre, 2025 - 6:00 p. m.
+      </div>
+      <div class="slots-list" id="slots-list"></div>
+    </div>
+    <button class="continue-btn">Continuar</button>
+  </main>
+  <script>
+    // Importa el navbar de usuario desde layout/navbarPublico.html
+    fetch("../layout/navbarPublico.html")
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById('navbar').innerHTML = html;
+        // Inicializa el botón contraer del navbar importado, si existe
+        const contraerBtn = document.getElementById('contraer');
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('main-content');
+        let collapsed = false;
+        contraerBtn?.addEventListener('click', function() {
+          collapsed = !collapsed;
+          sidebar.classList.toggle('collapsed');
+          mainContent.classList.toggle('sidebar-collapsed');
+          const icon = contraerBtn.querySelector('i');
+          if (collapsed) {
+            icon.classList.remove('fa-angle-left');
+            icon.classList.add('fa-angle-right');
+            contraerBtn.title = "Expandir Menú";
+          } else {
+            icon.classList.add('fa-angle-left');
+            icon.classList.remove('fa-angle-right');
+            contraerBtn.title = "Contraer Menú";
+          }
+        });
+        // Inicializa el botón de cerrar sesión si existe
+        if (document.getElementById('session-section')) {
+          window.cerrarSesion = function() {
+            alert('Sesión cerrada');
+            // window.location.href = 'login.html';
+          };
+        }
+      });
+
+    // --- CALENDARIO INTERACTIVO ---
+    let mesActual = 11; // noviembre
+    let anioActual = 2025;
+    let diasMes = 30;
+    let diaSeleccionado = 12;
+    let slotSeleccionado = 0;
+
+    const slots = [
+      "6:00 p. m. - 7:00 p. m.",
+      "7:00 p. m. - 8:00 p. m.",
+      "8:00 p. m. - 9:00 p. m.",
+      "9:00 p. m. - 10:00 p. m.",
+      "10:00 p. m. - 11:00 p. m.",
+      "11:00 p. m. - 12:00 a. m.",
+    ];
+    const slotsDisabled = [5];
+
+    const meses = [
+      "enero", "febrero", "marzo", "abril", "mayo", "junio",
+      "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
+    ];
+
+    function diasEnMes(mes, anio) {
+      return new Date(anio, mes, 0).getDate();
+    }
+
+    function primerDiaSemana(mes, anio) {
+      return new Date(anio, mes-1, 1).getDay();
+    }
+
+    function renderCalendar() {
+      const grid = document.getElementById('calendar-grid');
+      grid.innerHTML = '';
+      diasMes = diasEnMes(mesActual, anioActual);
+      let offset = primerDiaSemana(mesActual, anioActual);
+      offset = offset === 0 ? 6 : offset - 1;
+      for(let i=0;i<offset;i++) {
+        const empty = document.createElement('div');
+        empty.className = 'day inactive';
+        grid.appendChild(empty);
+      }
+      for(let d=1;d<=diasMes;d++) {
+        const btn = document.createElement('button');
+        btn.className = 'day' + (d===diaSeleccionado ? ' selected' : '');
+        btn.textContent = d;
+        btn.type = "button";
+        btn.onclick = function() {
+          diaSeleccionado = d;
+          renderCalendar();
+          updateFechaSeleccionada();
+        };
+        grid.appendChild(btn);
+      }
+    }
+
+    function renderSlots() {
+      const list = document.getElementById('slots-list');
+      list.innerHTML = '';
+      slots.forEach((slot, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'slot' + (i===slotSeleccionado ? ' selected' : '') + (slotsDisabled.includes(i) ? ' disabled' : '');
+        btn.textContent = slot;
+        btn.type = "button";
+        if(!slotsDisabled.includes(i)) {
+          btn.onclick = function() {
+            slotSeleccionado = i;
+            renderSlots();
+            updateFechaSeleccionada();
+          };
+        }
+        list.appendChild(btn);
+      });
+    }
+
+    function updateFechaSeleccionada() {
+      const mesNombre = meses[mesActual-1];
+      const fecha = `${diaSeleccionado} ${mesNombre}, ${anioActual} - ${slots[slotSeleccionado].split(' - ')[0]}`;
+      document.getElementById('fecha-seleccionada').textContent = fecha;
+    }
+
+    document.getElementById('mes').addEventListener('change', function() {
+      mesActual = parseInt(this.value);
+      diaSeleccionado = 1;
+      renderCalendar();
+      updateFechaSeleccionada();
+    });
+    document.getElementById('anio').addEventListener('change', function() {
+      anioActual = parseInt(this.value);
+      diaSeleccionado = 1;
+      renderCalendar();
+      updateFechaSeleccionada();
+    });
+    document.getElementById('prevMes').addEventListener('click', function() {
+      if(mesActual === 1) {
+        mesActual = 12;
+        anioActual--;
+      } else {
+        mesActual--;
+      }
+      diaSeleccionado = 1;
+      document.getElementById('mes').value = mesActual;
+      document.getElementById('anio').value = anioActual;
+      renderCalendar();
+      updateFechaSeleccionada();
+    });
+    document.getElementById('nextMes').addEventListener('click', function() {
+      if(mesActual === 12) {
+        mesActual = 1;
+        anioActual++;
+      } else {
+        mesActual++;
+      }
+      diaSeleccionado = 1;
+      document.getElementById('mes').value = mesActual;
+      document.getElementById('anio').value = anioActual;
+      renderCalendar();
+      updateFechaSeleccionada();
+    });
+
+    // Inicialización
+    renderCalendar();
+    renderSlots();
+    updateFechaSeleccionada();
+  </script>
+</body>
+</html>

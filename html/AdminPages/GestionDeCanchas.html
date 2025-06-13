@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Gestión de Canchas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <!-- Font Fredoka One for Figma style -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Fredoka One', Arial, sans-serif;
+      background: #ececec;
+    }
+    #navbar-admin {
+      z-index: 1001;
+    }
+    .main-content {
+      margin-left: 260px;
+      padding: 0;
+      min-height: 100vh;
+      background: #ececec;
+      transition: margin-left 0.33s cubic-bezier(.86,0,.07,1);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .main-content.sidebar-collapsed {
+      margin-left: 60px;
+    }
+    .titulo-canchas {
+      font-family: 'Fredoka One', Arial, sans-serif;
+      color: #4b6499;
+      font-size: 2.7em;
+      margin: 38px 0 32px 0;
+      text-align: center;
+      width: 100%;
+      letter-spacing: 1px;
+    }
+    .tabla-canchas-container {
+      margin: 0 auto;
+      width: 86%;
+      background: #fff;
+      border-radius: 26px;
+      box-shadow: 0 2px 18px 0 #0001;
+      padding: 26px 36px 36px 36px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .tabla-canchas {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 16px;
+    }
+    .tabla-canchas th, .tabla-canchas td {
+      font-family: 'Fredoka One', Arial, sans-serif;
+      font-size: 1.6em;
+      color: #4b6499;
+      padding: 14px 22px;
+      text-align: center;
+      background: #e3e3e3;
+      border-radius: 8px;
+    }
+    .tabla-canchas th {
+      background: #fff;
+      color: #4b6499;
+      font-size: 1.7em;
+      border-bottom: 3px solid #e3e3e3;
+      letter-spacing: 1px;
+    }
+    .tabla-canchas td {
+      font-size: 1.45em;
+      background: #e3e3e3;
+    }
+    /* Estado colores */
+    .estado-disponible {
+      color: #269643;
+    }
+    .estado-mant {
+      color: #e2a100;
+    }
+    .estado-reservado {
+      color: #3A5472;
+    }
+    /* Responsive */
+    @media (max-width: 900px) {
+      .main-content,
+      .main-content.sidebar-collapsed {
+        margin-left: 65px;
+      }
+      .tabla-canchas-container {
+        width: 98%;
+        padding: 10px 4px 22px 4px;
+      }
+      .tabla-canchas th, .tabla-canchas td {
+        font-size: 1em;
+        padding: 7px 4px;
+      }
+      .titulo-canchas {
+        font-size: 1.3em;
+      }
+    }
+    @media (max-width: 600px) {
+      .main-content,
+      .main-content.sidebar-collapsed {
+        margin-left: 0;
+      }
+      .tabla-canchas-container {
+        padding: 2px;
+      }
+      .titulo-canchas {
+        font-size: 1em;
+        margin: 20px 0 16px 0;
+      }
+      .tabla-canchas th, .tabla-canchas td {
+        padding: 4px 1px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="navbar-admin"></div>
+  <main class="main-content" id="main-content">
+    <div class="titulo-canchas">Gestión de Canchas</div>
+    <div class="tabla-canchas-container">
+      <table class="tabla-canchas">
+        <thead>
+          <tr>
+            <th>Cancha</th>
+            <th>Tipo</th>
+            <th>Estado</th>
+            <th>Precio/Hora</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Fútbol</td>
+            <td class="estado-disponible">Disponible</td>
+            <td>s/20</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Voley</td>
+            <td class="estado-mant">Mant.</td>
+            <td>s/15</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Tenis</td>
+            <td class="estado-disponible">Disponible</td>
+            <td>s/10</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>Basquet</td>
+            <td class="estado-reservado">Reservado</td>
+            <td>s/20</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>Fútbol</td>
+            <td class="estado-reservado">Reservado</td>
+            <td>s/20</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+  <script>
+    // Importar el navbar admin y aplicar el efecto de colapsar
+    fetch("../layout/navbarAdmin.html")
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById('navbar-admin').innerHTML = html;
+        // Animación contraer menú (navbarAdmin.html debe tener id="sidebar" en <nav>)
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('main-content');
+        const contraerBtn = document.getElementById('contraer');
+        let collapsed = false;
+        contraerBtn?.addEventListener('click', function() {
+          collapsed = !collapsed;
+          sidebar.classList.toggle('collapsed');
+          mainContent.classList.toggle('sidebar-collapsed');
+          const icon = contraerBtn.querySelector('i');
+          if (collapsed) {
+            icon.classList.remove('fa-angle-left');
+            icon.classList.add('fa-angle-right');
+            contraerBtn.title = "Expandir Menú";
+          } else {
+            icon.classList.add('fa-angle-left');
+            icon.classList.remove('fa-angle-right');
+            contraerBtn.title = "Contraer Menú";
+          }
+        });
+      });
+  </script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<nav class="sidebar" id="sidebar">
+  <img src="../src/logo.jpg" alt="Logo GOL" class="logo"/>
+  <ul class="nav-list">
+    <li><a href="../pages/Reserva.html" class="active"><i class="fa-regular fa-calendar-check"></i><span>Reserva la Cancha</span></a></li>
+    <li><a href="../pages/EligeEstilo.html"><i class="fa-regular fa-envelope"></i><span>Elige tu Estilo</span></a></li>
+    <li><a href="../pages/DatosPersonales.html"><i class="fa-regular fa-user"></i><span>Datos Personales</span></a></li>
+    <li><a href="../pages/MetodoPago.html"><i class="fa-regular fa-credit-card"></i><span>Método de Pago</span></a></li>
+  </ul>
+  <div class="session-section" id="session-section">
+    <span>Sesión iniciada</span>
+    <button onclick="cerrarSesion()">Salir de sesión</button>
+  </div>
+  <div class="bottom-section">
+    <button id="contraer">
+      <span>Contraer Menú</span>
+      <i class="fa-solid fa-angle-left"></i>
+    </button>
+    <img src="../src/logo.jpg" alt="Logo GOL pequeño" class="logo-small"/>
+  </div>
+</nav>
+<script>
+function cerrarSesion() {
+  alert('Sesión cerrada');
+  // window.location.href = 'login.html';
+}
+
+// Contracción del menú lateral (para que funcione al importar este navbar)
+document.addEventListener("DOMContentLoaded", function() {
+  const contraerBtn = document.getElementById('contraer');
+  const sidebar = document.getElementById('sidebar');
+  if (contraerBtn && sidebar) {
+    let collapsed = false;
+    contraerBtn.addEventListener('click', function() {
+      collapsed = !collapsed;
+      sidebar.classList.toggle('collapsed');
+      const icon = contraerBtn.querySelector('i');
+      if (collapsed) {
+        icon.classList.remove('fa-angle-left');
+        icon.classList.add('fa-angle-right');
+        contraerBtn.title = "Expandir Menú";
+      } else {
+        icon.classList.add('fa-angle-left');
+        icon.classList.remove('fa-angle-right');
+        contraerBtn.title = "Contraer Menú";
+      }
+    });
+  }
+});
+</script>

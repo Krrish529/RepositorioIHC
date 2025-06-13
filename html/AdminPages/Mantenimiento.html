@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Mantenimiento</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+    body {
+      margin: 0;
+      font-family: 'Fredoka One', Arial, sans-serif;
+      background: #ececec;
+    }
+    .main-content {
+      margin-left: 260px;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      background: #ececec;
+      width: calc(100vw - 260px);
+      transition: margin-left 0.33s cubic-bezier(.86,0,.07,1);
+    }
+    .main-content.sidebar-collapsed {
+      margin-left: 60px;
+      width: calc(100vw - 60px);
+    }
+    .titulo-mantenimiento {
+      font-family: 'Fredoka One', Arial, sans-serif;
+      color: #4b6499;
+      font-size: 2.6em;
+      margin: 38px 0 30px 0;
+      text-align: center;
+      width: 100%;
+      letter-spacing: 1px;
+    }
+    .tabla-mantenimiento-container {
+      margin: 0 auto;
+      width: 86%;
+      background: #fff;
+      border-radius: 22px;
+      box-shadow: 0 2px 18px 0 #0001;
+      padding: 26px 36px 36px 36px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .tabla-mantenimiento {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 10px;
+    }
+    .tabla-mantenimiento th, .tabla-mantenimiento td {
+      font-family: 'Fredoka One', Arial, sans-serif;
+      font-size: 1.35em;
+      color: #4b6499;
+      padding: 12px 18px;
+      text-align: center;
+      background: #e3e3e3;
+      border-radius: 7px;
+    }
+    .tabla-mantenimiento th {
+      background: #fff;
+      color: #4b6499;
+      font-size: 1.42em;
+      border-bottom: 3px solid #e3e3e3;
+      letter-spacing: 1px;
+    }
+    @media (max-width: 900px) {
+      .main-content,
+      .main-content.sidebar-collapsed {
+        margin-left: 65px;
+        width: calc(100vw - 65px);
+      }
+      .tabla-mantenimiento-container {
+        width: 98%;
+        padding: 10px 4px 22px 4px;
+      }
+      .tabla-mantenimiento th, .tabla-mantenimiento td {
+        font-size: 1em;
+        padding: 5px 4px;
+      }
+      .titulo-mantenimiento {
+        font-size: 1.3em;
+      }
+    }
+    @media (max-width: 600px) {
+      .main-content,
+      .main-content.sidebar-collapsed {
+        margin-left: 0;
+        width: 100vw;
+      }
+      .tabla-mantenimiento-container {
+        padding: 2px;
+      }
+      .titulo-mantenimiento {
+        font-size: 1em;
+        margin: 20px 0 16px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="navbar-admin"></div>
+  <!-- MAIN CONTENT -->
+  <main class="main-content" id="main-content">
+    <div class="titulo-mantenimiento">Mantenimiento</div>
+    <div class="tabla-mantenimiento-container">
+      <table class="tabla-mantenimiento">
+        <thead>
+          <tr>
+            <th>Cancha</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Motivo</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>8/01/2024</td>
+            <td>10:00 am</td>
+            <td>Limpieza</td>
+            <td>En curso</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>1/02/2024</td>
+            <td>9:00 pm</td>
+            <td>Net Nueva</td>
+            <td>Pendiente</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>18/02/2024</td>
+            <td>2:00 pm</td>
+            <td>Net Nueva</td>
+            <td>Pendiente</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>22/02/2024</td>
+            <td>12:00 pm</td>
+            <td>Limpieza</td>
+            <td>Cancelado</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>31/02/2024</td>
+            <td>5:00 am</td>
+            <td>Limpieza</td>
+            <td>Realizado</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+  <script>
+    // Importa el navbar admin por fetch (Ajusta la ruta si tu HTML está a otro nivel de ../)
+    fetch("../layout/navbarAdmin.html")
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById('navbar-admin').innerHTML = html;
+        // Animación contraer menú (navbarAdmin.html debe tener id="sidebar" en <nav>)
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('main-content');
+        const contraerBtn = document.getElementById('contraer');
+        let collapsed = false;
+        contraerBtn?.addEventListener('click', function() {
+          collapsed = !collapsed;
+          sidebar.classList.toggle('collapsed');
+          mainContent.classList.toggle('sidebar-collapsed');
+          const icon = contraerBtn.querySelector('i');
+          if (collapsed) {
+            icon.classList.remove('fa-angle-left');
+            icon.classList.add('fa-angle-right');
+            contraerBtn.title = "Expandir Menú";
+          } else {
+            icon.classList.add('fa-angle-left');
+            icon.classList.remove('fa-angle-right');
+            contraerBtn.title = "Contraer Menú";
+          }
+        });
+      });
+  </script>
+</body>
+</html>
